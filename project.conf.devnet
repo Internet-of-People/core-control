@@ -1,0 +1,10 @@
+#!/bin/bash
+
+#Branch name, used for core-control itself and hydra-core as well
+branch="develop"
+
+#Network name
+network="devnet"
+
+#P2P port
+p2p_port="4702"

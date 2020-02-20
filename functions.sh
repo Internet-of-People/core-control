@@ -287,7 +287,7 @@ install_db () {
 
 install_core () {
 
-  git clone $repo $core -b $branch > /dev/null 2>&1
+  git clone --recurse-submodules $repo $core -b $branch > /dev/null 2>&1
 
   if [ -d $HOME/.config ]; then
     sudo chown -R $USER:$USER $HOME/.config > /dev/null 2>&1
@@ -313,6 +313,16 @@ update () {
   local added="$(cat $config/plugins.js | grep round-monitor)"
   local fstatus=$(pm2status "${name}-forger" | awk '{print $4}')
   local rstatus=$(pm2status "${name}-relay" | awk '{print $4}')
+
+  # INSTALL MORPHEUS IF IT IS NOT YET THERE
+  if [ -z "$(cat $config/plugins.js | grep '@internet-of-people/morpheus-hydra-plugin')" ]; then
+    if [ -z "$(cat $config/plugins.js | grep '@arkecosystem/core-transaction-pool')" ]; then
+      echo "ERROR: $config/plugins.js does not contain @arkecosystem/core-transaction-pool which is essential to have Morpheus in Hydra Core."
+      exit 1;
+    fi
+
+    node $basedir/morpheus-installer.js $config/plugins.js
+  fi
 
   for plugin in $(ls $basedir/plugins); do
 

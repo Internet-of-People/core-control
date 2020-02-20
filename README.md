@@ -1,11 +1,16 @@
-# Core v2 Management Tool - Hydra Mainnet (git install)
+# Core v2 Management Tool (git install)
 
 ## Installation
 
 ```sh
-git clone https://github.com/Internet-of-People/core-control -b hyd-mainnet-git
+git clone https://github.com/Internet-of-People/core-control -b master
+```
+
+### Usage
+
+```sh
 cd core-control
-./ccontrol.sh arg1 [arg2]
+NETWORK=[devnet|mainnet] ./ccontrol.sh arg1 [arg2]
 ```
 
 | arg1 | arg2 | Description |
@@ -28,6 +33,7 @@ cd core-control
 
 ## General
 This is a Streamlined CLI-Based Core v2 Management Tool. 
+- **Do not run as root!**
 - Installs fail2ban for ssh, and ufw allowing only port 22(ssh) and the cores ports.
 - For start/restart/stop/status/logs you can skip the 'all' argument as it's the default.
 - For install/remove you can skip the 'core' argument as it's the default.
@@ -47,9 +53,19 @@ If you're running a forger and/or have custom settings, you should add them agai
 The end result is that your node will start syncing from 0.
 - For plugin management just type the name of the plugin after 'plugin add/remove/update' as it appears in the list.
 - On first run the tool exposes the core-cli with the project name, e.g. ark for project Ark. It will be accessible after logout.
-- Do not run as root!
 
 ## Changelog
+
+### 2.6.1 - MANDATORY RELEASE
+- updated for core 2.6.1
+- `ccontrol.sh` now requires a `NETWORK` environment variable set to be either `devnet` or `mainnet`. See the installation guide.
+
+Note: it's a mandatory update!
+
+**To be able to use the latest core-control and Hydra Core, follow these steps:**
+1. `cd core-control`
+1. `git checkout master`
+1. `NETWORK=[devnet|mainnet] ./ccontrol update core`
 
 ### 2.5.1
 - added restart safe option

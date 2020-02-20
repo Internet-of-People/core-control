@@ -3,20 +3,11 @@
 #Core Repo
 repo="https://github.com/Internet-of-People/hydra-core.git"
 
-#Branch name
-branch="master"
-
 #Project name
 name="hydra"
 
-#Network name
-network="mainnet"
-
 #Log level (info|debug)
 log_level="info"
-
-#P2P port
-p2p_port="4701"
 
 #API port
 api_port="4703"

@@ -1,5 +1,10 @@
 #!/bin/bash
 
+if [[ -z "$NETWORK" ]];then
+  echo "ERROR: Please run this script with NETWORK environment variable set to either mainnet or devnet."
+  exit 1;
+fi
+
 basedir="$(dirname "$(cat $HOME/.bashrc | grep ccontrol | awk -F"=" '{print $2}')")"
 execdir="$(dirname "$0")"
 
@@ -11,7 +16,8 @@ fi
 
 basedir="$PWD"
 
-. "project.conf"
+. "project.conf.$NETWORK"
+. "project.conf.common"
 . "functions.sh"
 . "misc.sh"
 
@@ -76,16 +82,20 @@ main () {
     cd $core > /dev/null 2>&1
     git_check
 
-    if [ "$up2date" = "yes" ]; then
+    local morpheus_plugin_installed="$(cat $config/plugins.js | grep morpheus)"
+
+    if [ "$up2date" = "yes" ] && [ ! -z "$morpheus_plugin_installed" ]; then
       echo -e "Already up-to-date."
       exit 1
     fi
 
     git pull > /dev/null 2>&1
+    git submodule update --init --recursive --remote 2>&1
 
     if [ "$?" != "0" ]; then
       rm yarn.lock > /dev/null 2>&1
       git pull > /dev/null 2>&1
+      git submodule update --init --recursive --remote 2>&1
     fi
 
     if [ "$?" != "0" ]; then
