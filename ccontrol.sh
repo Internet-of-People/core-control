@@ -89,12 +89,12 @@ main () {
       exit 1
     fi
 
-    git pull > /dev/null 2>&1
+    git pull --rebase > /dev/null 2>&1
     git submodule update --init --recursive --remote 2>&1
 
     if [ "$?" != "0" ]; then
       rm yarn.lock > /dev/null 2>&1
-      git pull > /dev/null 2>&1
+      git pull --rebase > /dev/null 2>&1
       git submodule update --init --recursive --remote 2>&1
     fi
 
