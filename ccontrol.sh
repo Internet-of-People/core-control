@@ -80,7 +80,7 @@ main () {
     fi
 
     cd $core > /dev/null 2>&1
-    git_check
+    git_check_core
 
     local morpheus_plugin_installed="$(cat $config/plugins.js | grep morpheus)"
 

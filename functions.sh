@@ -32,6 +32,20 @@ pm2status () {
 
 }
 
+git_check_core () {
+
+  git fetch > /dev/null 2>&1
+  loc=$(git rev-parse --short @)
+  rem=$(git rev-parse --short $network)
+
+  if [ "$loc" = "$rem" ]; then
+    up2date="yes"
+  else
+    up2date="no"
+  fi
+
+}
+
 git_check () {
 
   git fetch > /dev/null 2>&1
@@ -287,7 +301,7 @@ install_db () {
 
 install_core () {
 
-  git clone --recurse-submodules $repo $core -b $branch > /dev/null 2>&1
+  git clone --recurse-submodules $repo $core -b $network > /dev/null 2>&1
 
   if [ -d $HOME/.config ]; then
     sudo chown -R $USER:$USER $HOME/.config > /dev/null 2>&1
@@ -511,7 +525,7 @@ rollback () {
 update_info () {
 
   cd $basedir > /dev/null 2>&1
-  git_check
+  git_check_core
 
   echo -e -n "\n${cyan}core-control${nc} v${cyan}${version}${nc} hash: ${cyan}${loc}${nc} status: "
 
@@ -524,7 +538,7 @@ update_info () {
   if [ -d $core ]; then
 
     cd $core > /dev/null 2>&1
-    git_check
+    git_check_core
 
     echo -e -n "${cyan}${name}-core${nc} v${cyan}${corever}${nc} hash: ${cyan}${loc}${nc} status: "
 
