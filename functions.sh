@@ -526,7 +526,7 @@ rollback () {
 update_info () {
 
   cd $basedir > /dev/null 2>&1
-  git_check_core
+  git_check
 
   echo -e -n "\n${cyan}core-control${nc} v${cyan}${version}${nc} hash: ${cyan}${loc}${nc} status: "
 

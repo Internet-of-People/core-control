@@ -43,6 +43,10 @@ This is a Streamlined CLI-Based Core v2 Management Tool.
 - Using the 'restart safe' arguments requires the round-monitor core plugin and restarts the core services when safe to do so in 
 order to avoid missing a block.
 - When setting a delegate secret just type your secret after the 'set' argument without quotes.
+  ```bash
+  # Example
+  NETWORK=[devnet|mainnet] ./ccontrol.sh secret set one two three four five six seven eight nine ten eleven twelve
+  ```
 - When doing a rollback just type the desired height after the 'rollback' argument.
 - Rollback will stop the running processes, do the rollback and start the processes that were online.
 - The script adds an alias named 'ccontrol' on first run. On your next shell login you'll be able to call the script from anywhere
@@ -56,8 +60,8 @@ The end result is that your node will start syncing from 0.
 
 ## Changelog
 
-### 2.6.1 - MANDATORY RELEASE
-- updated for core 2.6.1
+### 2.6.10 - MANDATORY RELEASE
+- updated for core 2.6.10
 - `ccontrol.sh` now requires a `NETWORK` environment variable set to be either `devnet` or `mainnet`. See the installation guide.
 
 Note: it's a mandatory update!
