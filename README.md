@@ -19,8 +19,8 @@ NETWORK=[devnet|mainnet] ./ccontrol.sh arg1 [arg2]
 | `update` | `core`/`self`/`check` | Update Core / Core-Control / Check |
 | `remove` | `core`/`self` | Remove Core / Core-Control |
 | `secret` | `set`/`clear` | Delegate Secret Set / Clear |
-| `start` | `relay`/`forger`/`all` | Start Core Services |
-| `restart` | `relay`/`forger`/`all`/`safe` | Restart Core Services |
+| `start` | `relay`/`all` | Start Core Services |
+| `restart` | `relay`/`all`/`safe` | Restart Core Services |
 | `stop` | `relay`/`forger`/`all` | Stop Core Services |
 | `status` | `relay`/`forger`/`all` | Show Core Services Status |
 | `logs` | `relay`/`forger`/`all` | Show Core Logs |
