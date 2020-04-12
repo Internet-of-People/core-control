@@ -233,13 +233,13 @@ status () {
     fi
 
     if [ "$fstatus" = "online" ]; then
-      echo -ne "[DEPRECATED] forger: ${green}online${nc} "
+      echo -ne "forger (deprecated since 2.6.10, see changelog): ${green}online${nc} "
     fi
 
     if [ "$cstatus" = "online" ]; then
-      echo -ne "core: ${green}online${nc}\n"
+      echo -ne "core (relay&forger): ${green}online${nc}\n"
     else
-      echo -ne "core: ${red}offline${nc}\n"
+      echo -ne "core (relay&forger): ${red}offline${nc}\n"
     fi
 
   else
