@@ -226,7 +226,7 @@ status () {
     local rstatus=$(pm2status "${name}-relay" | awk '{print $4}')
     local cstatus=$(pm2status "${name}-core" | awk '{print $4}')
 
-    if [ "$rstatus" = "online" && "$cstatus" != "online" ]; then
+    if [ "$rstatus" = "online" ] && [ "$cstatus" != "online" ]; then
       echo -ne "relay: ${green}online${nc} "
     else
       echo -ne "relay: ${red}offline${nc} "
