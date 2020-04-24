@@ -19,8 +19,11 @@ if(plugins.indexOf('@internet-of-people/morpheus-hydra-plugin')>-1) {
   process.exit(0);
 }
 
-plugins = plugins.replaceAll(
-  '"@arkecosystem/core-magistrate-transactions"',
+var find = '"@arkecosystem/core-magistrate-transactions"';
+var regexp = new RegExp(find, 'g');
+
+plugins = plugins.replace(
+  regexp,
   '"@arkecosystem/core-magistrate-transactions", "@internet-of-people/morpheus-hydra-plugin"'
 );
 
