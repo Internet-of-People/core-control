@@ -35,6 +35,7 @@ pm2status () {
 git_check_core () {
 
   git fetch > /dev/null 2>&1
+  git tag -d $network
   git fetch --tags > /dev/null 2>&1
   loc=$(git rev-parse --short @)
   rem=$(git rev-parse --short $network)

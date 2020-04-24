@@ -89,6 +89,7 @@ main () {
       exit 1
     fi
 
+    git checkout .
     git fetch --tags 2>&1
     git checkout $network 2>&1
     git submodule update --init --recursive --remote 2>&1

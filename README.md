@@ -6,11 +6,53 @@
 git clone https://github.com/Internet-of-People/core-control -b master
 ```
 
-### Usage
+## Important Change from 2.6.10
+
+In 2.6.10 we made three breaking changes.
+
+1. We only have a master branch now
+2. You need to prepend the `ccontrol` with a `NETWORK` environment set. See in the next section.
+
+### How to Upgrade from 2.5.19 to 2.6.10
+
+If you ran only a relay node, you have nothing to do here. Only, if you ran a forger as well.
+
+1. Move to `master` branch.
+
+   ```bash
+   git fetch
+   git checkout master
+   ```
+  
+1. Upgrade the core-control
+
+   ```bash
+   $ export NETWORK=[mainnet|devnet] && ./ccontrol.sh update self
+   ```
+
+1. Upgrade Hydra Core
+
+   ```bash
+   $ export NETWORK=[mainnet|devnet] && ./ccontrol.sh update core
+   ```
+
+1. Stop all
+
+   ```bash
+   $ export NETWORK=[mainnet|devnet] && ./ccontrol.sh stop all
+   ```
+
+1. If you ran both a relay and a forger, then start all with `all`
+
+   ```bash
+   $ export NETWORK=[mainnet|devnet] && ./ccontrol.sh start all
+   ```
+
+## Core Control Usage
 
 ```sh
 cd core-control
-NETWORK=[devnet|mainnet] ./ccontrol.sh arg1 [arg2]
+export NETWORK=[devnet|mainnet] && ./ccontrol.sh arg1 [arg2]
 ```
 
 | arg1 | arg2 | Description |
@@ -43,10 +85,12 @@ This is a Streamlined CLI-Based Core v2 Management Tool.
 - Using the 'restart safe' arguments requires the round-monitor core plugin and restarts the core services when safe to do so in 
 order to avoid missing a block.
 - When setting a delegate secret just type your secret after the 'set' argument without quotes.
+
   ```bash
   # Example
-  NETWORK=[devnet|mainnet] ./ccontrol.sh secret set one two three four five six seven eight nine ten eleven twelve
+  export NETWORK=[devnet|mainnet] && ./ccontrol.sh secret set one two three four five six seven eight nine ten eleven twelve
   ```
+
 - When doing a rollback just type the desired height after the 'rollback' argument.
 - Rollback will stop the running processes, do the rollback and start the processes that were online.
 - The script adds an alias named 'ccontrol' on first run. On your next shell login you'll be able to call the script from anywhere
@@ -60,27 +104,47 @@ The end result is that your node will start syncing from 0.
 
 ## Changelog
 
+### 2.6.31
+
+- reverted back forger handling. Most of you complaint about how this 3rd party tool handles forger starting, so we reverted it back to the original flow. With this release you can start your forger separately again.
+- Upgrade to 2.6.31 Hydra Core
+- Upgrade to 2.0.5 DAC (project Morpheus)
+
+#### How to update from 2.6.10
+
+```bash
+$ export NETWORK=[devnet|mainnet] && ./ccontrol.sh update self
+$ export NETWORK=[devnet|mainnet] && ./ccontrol.sh update core
+$ export NETWORK=[devnet|mainnet] && ./ccontrol.sh stop all
+$ export NETWORK=[devnet|mainnet] && ./ccontrol.sh start [relay|forger|all]
+```
+
 ### 2.6.10 - MANDATORY RELEASE
+
 - updated for core 2.6.10
 - `ccontrol.sh` now requires a `NETWORK` environment variable set to be either `devnet` or `mainnet`. See the installation guide.
 
 Note: it's a mandatory update!
 
 **To be able to use the latest core-control and Hydra Core, follow these steps:**
+
 1. `cd core-control`
 1. `git checkout master`
-1. `NETWORK=[devnet|mainnet] ./ccontrol update core`
+1. `export NETWORK=[devnet|mainnet] && ./ccontrol update core`
 
 ### 2.5.1
+
 - added restart safe option
 - use restart safe on update if all requirements are met
 - added plugin manager
 - snapshot now uses the core-snapshot interface
 
 ### 2.5
+
 - updated for core 2.5
 
 ### 2.4
+
 - fixed a bug in config reset
 - added log level file
 - renamed json rpc
@@ -88,20 +152,24 @@ Note: it's a mandatory update!
 - updated for core 2.4
 
 ### 2.3
+
 - added database clear functionality
 - expose the core-cli as the project name
 - added rollback functionality
 - updated for core 2.3
 
 ### 2.2
+
 - updated for core 2.2
 
 ### 2.1
+
 - made 'update core' a lot smarter
 - bump version to match core major version
 - added status argument to show process status
 
 ### 0.7
+
 - added a splash of color
 - added update check to show update availability
 - the ccontrol alias now has autocomplete for all arguments
@@ -114,6 +182,7 @@ Note: it's a mandatory update!
 - removed automatic self-update
 
 ### 0.6
+
 - added delegate secret management
 - added local snapshot management
 - added process restart capability
@@ -124,6 +193,7 @@ Note: it's a mandatory update!
 - added config reset capability
 
 ### 0.5
+
 - added system update
 - added logs display
 - network name is now pulled from .env for simpler commands
@@ -138,15 +208,19 @@ Note: it's a mandatory update!
 - pm2 now starts on boot and saves process state after start/stop
 
 ### 0.4
+
 - added system information
 
 ### 0.3
+
 - added mainnet and devnet update procedures
 
 ### 0.2
+
 - refactored code with a config file for easy migration to core v2 bridgechains
 
 ### 0.1
+
 - initial release
 
 ## Security
