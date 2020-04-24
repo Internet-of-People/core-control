@@ -6,47 +6,11 @@
 git clone https://github.com/Internet-of-People/core-control -b master
 ```
 
-## Important Change in 2.6.10
-
-In 2.6.10 we made three breaking changes.
-
-1. We only have a master branch now
-2. You need to prepend the `ccontrol` with a `NETWORK` environment set. See in the next section.
-3. From now on, there will be no option to start a forger node separately. You will only be able to start/restart with `relay` or `all` arg2 parameter. If you need a forger to be running, you have to use `all` which starts both the relay and the forger.
-
-You can still stop your currently running forger, but after you will only be able to start forger node together with the relay using the `all` param.
-
-#### How to Upgrade?
-
-If you ran only a relay node, you have nothing to do here. Only, if you ran a forger as well.
-
-1. Move to `master` branch.
-   ```bash
-   git fetch
-   git checkout master
-   ```
-1. Upgrade the core-control
-   ```bash
-   NETWORK=[mainnet|devnet] ccontrol update self
-   ```
-1. Upgrade Hydra Core
-   ```bash
-   NETWORK=[mainnet|devnet] ccontrol update core
-   ``` 
-1. Stop all
-   ```bash
-   NETWORK=[mainnet|devnet] ccontrol stop all
-   ```
-1. If you ran both a relay and a forger, then start all with `all`
-   ```bash
-   NETWORK=[mainnet|devnet] ccontrol start all
-   ```
-
-## Usage
+### Usage
 
 ```sh
 cd core-control
-NETWORK=[devnet|mainnet] ccontrol arg1 [arg2]
+NETWORK=[devnet|mainnet] ./ccontrol.sh arg1 [arg2]
 ```
 
 | arg1 | arg2 | Description |
@@ -55,8 +19,8 @@ NETWORK=[devnet|mainnet] ccontrol arg1 [arg2]
 | `update` | `core`/`self`/`check` | Update Core / Core-Control / Check |
 | `remove` | `core`/`self` | Remove Core / Core-Control |
 | `secret` | `set`/`clear` | Delegate Secret Set / Clear |
-| `start` | `relay`/`all` | Start Core Services. Relay starts a relay node only, all starts both a relay and a forger node. |
-| `restart` | `relay`/`all`/`safe` | Restarts the currently running relay or relay&forger nodes. |
+| `start` | `relay`/`forger`/`all` | Start Core Services |
+| `restart` | `relay`/`forger`/`all`/`safe` | Restart Core Services |
 | `stop` | `relay`/`forger`/`all` | Stop Core Services |
 | `status` | `relay`/`forger`/`all` | Show Core Services Status |
 | `logs` | `relay`/`forger`/`all` | Show Core Logs |
@@ -68,7 +32,6 @@ NETWORK=[devnet|mainnet] ccontrol arg1 [arg2]
 | `plugin` | `list`/`add`/`remove`/`update` | Manage Core Plugins |
 
 ## General
-
 This is a Streamlined CLI-Based Core v2 Management Tool. 
 - **Do not run as root!**
 - Installs fail2ban for ssh, and ufw allowing only port 22(ssh) and the cores ports.
@@ -82,7 +45,7 @@ order to avoid missing a block.
 - When setting a delegate secret just type your secret after the 'set' argument without quotes.
   ```bash
   # Example
-  NETWORK=[devnet|mainnet] ccontrol secret set one two three four five six seven eight nine ten eleven twelve
+  NETWORK=[devnet|mainnet] ./ccontrol.sh secret set one two three four five six seven eight nine ten eleven twelve
   ```
 - When doing a rollback just type the desired height after the 'rollback' argument.
 - Rollback will stop the running processes, do the rollback and start the processes that were online.
@@ -99,14 +62,14 @@ The end result is that your node will start syncing from 0.
 
 ### 2.6.10 - MANDATORY RELEASE
 - updated for core 2.6.10
-- `ccontrol` now requires a `NETWORK` environment variable set to be either `devnet` or `mainnet`. See the installation guide.
+- `ccontrol.sh` now requires a `NETWORK` environment variable set to be either `devnet` or `mainnet`. See the installation guide.
 
 Note: it's a mandatory update!
 
 **To be able to use the latest core-control and Hydra Core, follow these steps:**
 1. `cd core-control`
 1. `git checkout master`
-1. `NETWORK=[devnet|mainnet] ccontrol update core`
+1. `NETWORK=[devnet|mainnet] ./ccontrol update core`
 
 ### 2.5.1
 - added restart safe option

@@ -10,8 +10,8 @@ wrong_arguments () {
   echo -e "| update   | core / self / check          | Update Core / Core-Control / Check |"
   echo -e "| remove   | core / self                  | Remove Core / Core-Control         |"
   echo -e "| secret   | set / clear                  | Delegate Secret Set / Clear        |"
-  echo -e "| start    | relay / all                  | Start Core Services                |"
-  echo -e "| restart  | relay / all / safe           | Restart Core Services              |"
+  echo -e "| start    | relay / forger / all         | Start Core Services                |"
+  echo -e "| restart  | relay / forger / all / safe  | Restart Core Services              |"
   echo -e "| stop     | relay / forger / all         | Stop Core Services                 |"
   echo -e "| status   | relay / forger / all         | Show Core Services Status          |"
   echo -e "| logs     | relay / forger / all         | Show Core Logs                     |"
@@ -94,43 +94,49 @@ setefile () {
 start () {
 
   local secrets=$(cat $config/delegates.json | jq -r '.secrets')
-  local fstatus=$(pm2status "${name}-forger" | awk '{print $4}')
-  local rstatus=$(pm2status "${name}-relay" | awk '{print $4}')
-  local cstatus=$(pm2status "${name}-core" | awk '{print $4}')
 
-  if [ "$fstatus" = "online" ] || [ "$rstatus" = "online" ] || [ "$cstatus" = "online" ]; then
-    echo -e "\n${red}A process is already running, please stop it.${nc}"
-  elif [ "$1" = "all" ]; then
+  if [ "$1" = "all" ]; then
 
-    if [ "$secrets" = "[]" ]; then
-      echo -e "\n${red}Delegate secret is missing. Forger start aborted!${nc}"
-    else
-      pm2 --name "${name}-core" start $core/packages/core/bin/run -- core:run --network $network --token $name > /dev/null 2>&1
-    fi
-
-    local cstatus=$(pm2status "${name}-core" | awk '{print $4}')
-
-    if [ "$cstatus" != "online" ]; then
-      echo -e "\n${red}Process startup failed.${nc}"
-    fi
-  
-  elif [ "$1" = "relay" ]; then
+    local fstatus=$(pm2status "${name}-forger" | awk '{print $4}')
+    local rstatus=$(pm2status "${name}-relay" | awk '{print $4}')
 
     if [ "$rstatus" != "online" ]; then
       pm2 --name "${name}-relay" start $core/packages/core/bin/run -- relay:run --network $network --token $name > /dev/null 2>&1
     else
-      echo -e "\n${red}Process relay is already running. Skipping...${nc}"
+      echo -e "\n${red}Process relay already running. Skipping...${nc}"
+    fi
+
+    if [ "$secrets" = "[]" ]; then
+      echo -e "\n${red}Delegate secret is missing. Forger start aborted!${nc}"
+    elif [ "$fstatus" != "online" ]; then
+      pm2 --name "${name}-forger" start $core/packages/core/bin/run -- forger:run --network $network --token $name > /dev/null 2>&1
+    else
+      echo -e "\n${red}Process forger already running. Skipping...${nc}"
     fi
 
     local rstatus=$(pm2status "${name}-relay" | awk '{print $4}')
 
-    if [[ "$rstatus" != "online" ]]; then
+    if [ "$rstatus" != "online" ]; then
       echo -e "\n${red}Process startup failed.${nc}"
     fi
 
   else
 
-    echo -e "\n${red}We can only start all or relay, you tried $1.${nc}"
+    local pstatus=$(pm2status "${name}-$1" | awk '{print $4}')
+
+    if [[ "$secrets" = "[]" && "$1" = "forger" ]]; then
+      echo -e "\n${red}Delegate secret is missing. Forger start aborted!${nc}"
+    elif [ "$pstatus" != "online" ]; then
+      pm2 --name "${name}-$1" start $core/packages/core/bin/run -- ${1}:run --network $network --token $name > /dev/null 2>&1
+    else
+      echo -e "\n${red}Process $1 already running. Skipping...${nc}"
+    fi
+
+    local pstatus=$(pm2status "${name}-$1" | awk '{print $4}')
+
+    if [[ "$pstatus" != "online" && "$1" = "relay" ]]; then
+      echo -e "\n${red}Process startup failed.${nc}"
+    fi
 
   fi
 
@@ -140,16 +146,31 @@ start () {
 
 restart () {
 
-  local fstatus=$(pm2status "${name}-forger" | awk '{print $4}')
-  local rstatus=$(pm2status "${name}-relay" | awk '{print $4}')
-  local cstatus=$(pm2status "${name}-core" | awk '{print $4}')
+  if [ "$1" = "all" ]; then
 
-  if [ "$1" = "safe" ]; then
+    local fstatus=$(pm2status "${name}-forger" | awk '{print $4}')
+    local rstatus=$(pm2status "${name}-relay" | awk '{print $4}')
+
+    if [ "$rstatus" = "online" ]; then
+      pm2 restart ${name}-relay > /dev/null 2>&1
+    else
+      echo -e "\n${red}Process relay not running. Skipping...${nc}"
+    fi
+
+    if [ "$fstatus" = "online" ]; then
+      pm2 restart ${name}-forger > /dev/null 2>&1
+    else
+      echo -e "\n${red}Process forger not running. Skipping...${nc}"
+    fi
+
+  elif [ "$1" = "safe" ]; then
 
     local api=$(curl -Is http://127.0.0.1:5001)
+    local fstatus=$(pm2status "${name}-forger" | awk '{print $4}')
+    local rstatus=$(pm2status "${name}-relay" | awk '{print $4}')
 
-    if [[ "$rstatus" != "online" || "$cstatus" != "online" ]]; then
-      echo -e "\n${red}Core is offline. Use '${cyan}ccontrol restart${red}' instead.${nc}\n"
+    if [[ "$rstatus" != "online" || "$fstatus" != "online" ]]; then
+      echo -e "\n${red}Core forger is offline. Use '${cyan}ccontrol restart${red}' instead.${nc}\n"
       exit 1
     elif [ -z "$api" ]; then
       echo -e "\n${red}Plugin round-monitor not active. Use '${cyan}ccontrol restart${red}' instead.${nc}\n"
@@ -161,13 +182,12 @@ restart () {
 
   else
 
-    if [ "$fstatus" = "online" ]; then
-      echo -e "\n${red}Forger only is not supported anymore, we stop it now, but please start all or relay manually.${nc}"
-      pm2 stop ${name}-forger > /dev/null 2>&1
-    elif [ "$rstatus" = "online" ]; then
-      pm2 restart ${name}-relay > /dev/null 2>&1
-    elif [ "$cstatus" = "online" ]; then
-      pm2 restart ${name}-core > /dev/null 2>&1
+    local pstatus=$(pm2status "${name}-$1" | awk '{print $4}')
+
+    if [ "$pstatus" = "online" ]; then
+      pm2 restart ${name}-$1 > /dev/null 2>&1
+    else
+      echo -e "\n${red}Process $1 not running. Skipping...${nc}"
     fi
 
   fi
@@ -180,7 +200,6 @@ stop () {
 
     local fstatus=$(pm2status "${name}-forger" | awk '{print $4}')
     local rstatus=$(pm2status "${name}-relay" | awk '{print $4}')
-    local cstatus=$(pm2status "${name}-core" | awk '{print $4}')
 
     if [ "$rstatus" = "online" ]; then
       pm2 stop ${name}-relay > /dev/null 2>&1
@@ -192,12 +211,6 @@ stop () {
       pm2 stop ${name}-forger > /dev/null 2>&1
     else
       echo -e "\n${red}Process forger not running. Skipping...${nc}"
-    fi
-
-    if [ "$cstatus" = "online" ]; then
-      pm2 stop ${name}-core > /dev/null 2>&1
-    else
-      echo -e "\n${red}Process core not running. Skipping...${nc}"
     fi
 
   else
@@ -224,22 +237,17 @@ status () {
 
     local fstatus=$(pm2status "${name}-forger" | awk '{print $4}')
     local rstatus=$(pm2status "${name}-relay" | awk '{print $4}')
-    local cstatus=$(pm2status "${name}-core" | awk '{print $4}')
 
-    if [ "$rstatus" = "online" ] && [ "$cstatus" != "online" ]; then
+    if [ "$rstatus" = "online" ]; then
       echo -ne "relay: ${green}online${nc} "
     else
       echo -ne "relay: ${red}offline${nc} "
     fi
 
     if [ "$fstatus" = "online" ]; then
-      echo -ne "forger (deprecated since 2.6.10, see changelog): ${green}online${nc} "
-    fi
-
-    if [ "$cstatus" = "online" ]; then
-      echo -ne "core (relay&forger): ${green}online${nc}\n"
+      echo -e "forger: ${green}online${nc}\n"
     else
-      echo -ne "core (relay&forger): ${red}offline${nc}\n"
+      echo -e "forger: ${red}offline${nc}\n"
     fi
 
   else
@@ -316,9 +324,10 @@ update () {
 
   yarn setup > /dev/null 2>&1
 
+  local api=$(curl -Is http://127.0.0.1:5001)
+  local added="$(cat $config/plugins.js | grep round-monitor)"
   local fstatus=$(pm2status "${name}-forger" | awk '{print $4}')
   local rstatus=$(pm2status "${name}-relay" | awk '{print $4}')
-  local cstatus=$(pm2status "${name}-core" | awk '{print $4}')
 
   # INSTALL MORPHEUS IF IT IS NOT YET THERE
   if [ -z "$(cat $config/plugins.js | grep '@internet-of-people/morpheus-hydra-plugin')" ]; then
@@ -344,13 +353,20 @@ update () {
 
   done
 
-  if [ "$rstatus" = "online" ]; then
-    pm2 restart ${name}-relay > /dev/null 2>&1
-  elif [ "$cstatus" = "online" ]; then
-    pm2 restart ${name}-core > /dev/null 2>&1
-  elif [ "$fstatus" = "online" ]; then
-    echo -e "\n${red}Forger only is not supported anymore, we stop it now, but please start all or relay manually.${nc}"
-    pm2 stop ${name}-forger > /dev/null 2>&1
+  if [[ "$rstatus" = "online" && "$fstatus" = "online" && ! -z "$api" && ! -z "$added" ]]; then
+
+    curl -X POST http://127.0.0.1:5001/restart > /dev/null 2>&1
+
+  else
+
+    if [ "$rstatus" = "online" ]; then
+      pm2 restart ${name}-relay > /dev/null 2>&1
+    fi
+
+    if [ "$fstatus" = "online" ]; then
+      pm2 restart ${name}-forger > /dev/null 2>&1
+    fi
+
   fi
 
 }
@@ -359,7 +375,6 @@ remove () {
 
   pm2 delete ${name}-forger > /dev/null 2>&1
   pm2 delete ${name}-relay > /dev/null 2>&1
-  pm2 delete ${name}-core > /dev/null 2>&1
   pm2 save > /dev/null 2>&1
   rm -rf $core > /dev/null 2>&1
   rm -rf $data > /dev/null 2>&1
@@ -456,7 +471,6 @@ snapshot () {
 
     local fstatus=$(pm2status "${name}-forger" | awk '{print $4}')
     local rstatus=$(pm2status "${name}-relay" | awk '{print $4}')
-    local cstatus=$(pm2status "${name}-core" | awk '{print $4}')
 
     stop all > /dev/null 2>&1
 
@@ -469,8 +483,8 @@ snapshot () {
       start relay > /dev/null 2>&1
     fi
 
-    if [ "$fstatus" = "online" ] || [ "$cstatus" = "online" ]; then
-      start all > /dev/null 2>&1
+    if [ "$fstatus" = "online" ]; then
+      start forger > /dev/null 2>&1
     fi
 
   else
@@ -494,7 +508,6 @@ rollback () {
 
   local fstatus=$(pm2status "${name}-forger" | awk '{print $4}')
   local rstatus=$(pm2status "${name}-relay" | awk '{print $4}')
-  local cstatus=$(pm2status "${name}-core" | awk '{print $4}')
 
   stop all > /dev/null 2>&1
 
@@ -504,8 +517,8 @@ rollback () {
     start relay > /dev/null 2>&1
   fi
 
-  if [ "$fstatus" = "online" ] || [ "$cstatus" = "online" ]; then
-    start all > /dev/null 2>&1
+  if [ "$fstatus" = "online" ]; then
+    start forger > /dev/null 2>&1
   fi
 
 }
@@ -544,7 +557,6 @@ db_clear () {
 
   local fstatus=$(pm2status "${name}-forger" | awk '{print $4}')
   local rstatus=$(pm2status "${name}-relay" | awk '{print $4}')
-  local cstatus=$(pm2status "${name}-core" | awk '{print $4}')
 
   stop all > /dev/null 2>&1
 
@@ -555,8 +567,8 @@ db_clear () {
     start relay > /dev/null 2>&1
   fi
 
-  if [ "$fstatus" = "online" ] || [ "$cstatus" = "online" ]; then
-    start all > /dev/null 2>&1
+  if [ "$fstatus" = "online" ]; then
+    start forger > /dev/null 2>&1
   fi
 
 }
