@@ -19,7 +19,7 @@ if(plugins.indexOf('@internet-of-people/morpheus-hydra-plugin')>-1) {
   process.exit(0);
 }
 
-plugins = plugins.replace(
+plugins = plugins.replaceAll(
   '"@arkecosystem/core-magistrate-transactions"',
   '"@arkecosystem/core-magistrate-transactions", "@internet-of-people/morpheus-hydra-plugin"'
 );
