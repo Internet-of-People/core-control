@@ -83,8 +83,9 @@ main () {
     git_check_core
 
     local morpheus_plugin_installed="$(cat $config/plugins.js | grep morpheus)"
+    local morpheus_appjs_installed="$(cat $config/app.js | grep morpheus)"
 
-    if [ "$up2date" = "yes" ] && [ ! -z "$morpheus_plugin_installed" ]; then
+    if [ "$up2date" = "yes" ] && [ ! -z "$morpheus_plugin_installed" ] && [ ! -z "$morpheus_appjs_installed" ]; then
       echo -e "Already up-to-date."
       exit 1
     fi

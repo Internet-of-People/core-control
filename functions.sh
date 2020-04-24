@@ -337,7 +337,11 @@ update () {
       exit 1;
     fi
 
-    node $basedir/morpheus-installer.js $config/plugins.js
+    node $basedir/morpheus-pluginsjs-installer.js $config/plugins.js
+  fi
+
+  if [ -z "$(cat $config/app.js | grep '@internet-of-people/morpheus-hydra-plugin')" ]; then
+    node $basedir/morpheus-appjs-installer.js $config/app.js
   fi
 
   for plugin in $(ls $basedir/plugins); do
