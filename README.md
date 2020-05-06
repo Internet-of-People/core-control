@@ -111,6 +111,15 @@ The end result is that your node will start syncing from 0.
 - API rate limit increased.
 - BUGFIX: you may saw a lot of `MORPHEUS Trying to attach Morpheus HTTP API...` in the forger's log. That's now fixed.
 
+#### How to update from 2.6.31
+
+```bash
+$ export NETWORK=[devnet|mainnet] && ./ccontrol.sh update self
+$ export NETWORK=[devnet|mainnet] && ./ccontrol.sh update core
+$ export NETWORK=[devnet|mainnet] && ./ccontrol.sh stop all
+$ export NETWORK=[devnet|mainnet] && ./ccontrol.sh start [relay|forger|all]
+```
+
 ### 2.6.31
 
 - reverted back forger handling. Most of you complaint about how this 3rd party tool handles forger starting, so we reverted it back to the original flow. With this release you can start your forger separately again.
