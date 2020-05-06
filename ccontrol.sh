@@ -83,6 +83,11 @@ main () {
     git_check_core
 
     local morpheus_plugin_installed="$(cat $config/plugins.js | grep morpheus)"
+
+    if [ ! -f "$config/app.js" ]; then
+        cp $core/packages/core/bin/config/$network/app.js $config/app.js
+    fi
+
     local morpheus_appjs_installed="$(cat $config/app.js | grep morpheus)"
 
     if [ "$up2date" = "yes" ] && [ ! -z "$morpheus_plugin_installed" ] && [ ! -z "$morpheus_appjs_installed" ]; then
