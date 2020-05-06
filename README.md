@@ -104,6 +104,13 @@ The end result is that your node will start syncing from 0.
 
 ## Changelog
 
+### 2.6.31+p1
+
+- DAC transactions are more cheap now.
+- Upgrade to 2.0.6 DAC (project Morpheus).
+- API rate limit increased.
+- BUGFIX: you may saw a lot of `MORPHEUS Trying to attach Morpheus HTTP API...` in the forger's log. That's now fixed.
+
 ### 2.6.31
 
 - reverted back forger handling. Most of you complaint about how this 3rd party tool handles forger starting, so we reverted it back to the original flow. With this release you can start your forger separately again.

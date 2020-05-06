@@ -340,8 +340,10 @@ update () {
     node $basedir/morpheus-pluginsjs-installer.js $config/plugins.js
   fi
 
-  if [ -z "$(cat $config/app.js | grep '@internet-of-people/morpheus-hydra-plugin')" ]; then
-    node $basedir/morpheus-appjs-installer.js $config/app.js
+  ## CHECKING IF API RATE LIMIT INCREASE IS THERE
+  if [ -z "$(cat $config/.env | grep 'CORE_API_RATE_LIMIT')" ]; then
+    echo CORE_API_RATE_LIMIT=true >> $config/.env
+    echo CORE_API_RATE_LIMIT_USER_LIMIT=1000 >> $config/.env
   fi
 
   for plugin in $(ls $basedir/plugins); do
