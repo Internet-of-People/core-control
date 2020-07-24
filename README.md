@@ -104,6 +104,10 @@ The end result is that your node will start syncing from 0.
 
 ## Changelog
 
+### 2.6.31+p2
+
+- Upgrade to 3.1.1 DAC (project Morpheus)
+
 ### 2.6.31+p1
 
 - DAC transactions are more cheap now.
