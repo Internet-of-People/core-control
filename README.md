@@ -10,7 +10,7 @@ git clone https://github.com/Internet-of-People/core-control -b master
 
 In 2.6.10 we made three breaking changes.
 
-1. We only have a master branch now
+1. You only have to use the `master` branch from now. The `develop` branch is for development only and contains changes that might ruin your live production.
 2. You need to prepend the `ccontrol` with a `NETWORK` environment set. See in the next section.
 
 ### How to Upgrade from 2.5.19 to 2.6.10
@@ -74,7 +74,9 @@ export NETWORK=[devnet|mainnet] && ./ccontrol.sh arg1 [arg2]
 | `plugin` | `list`/`add`/`remove`/`update` | Manage Core Plugins |
 
 ## General
-This is a Streamlined CLI-Based Core v2 Management Tool. 
+
+This is a Streamlined CLI-Based Core v2 Management Tool.
+
 - **Do not run as root!**
 - Installs fail2ban for ssh, and ufw allowing only port 22(ssh) and the cores ports.
 - For start/restart/stop/status/logs you can skip the 'all' argument as it's the default.
@@ -103,6 +105,11 @@ The end result is that your node will start syncing from 0.
 - On first run the tool exposes the core-cli with the project name, e.g. ark for project Ark. It will be accessible after logout.
 
 ## Changelog
+
+### 2.6.31+p3
+
+- Upgraded to 4.0.1 SSI (project Morpheus, previously called DAC)
+- Added 1.0.0 DNS (project Coeus)
 
 ### 2.6.31+p2
 

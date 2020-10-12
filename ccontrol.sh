@@ -82,15 +82,15 @@ main () {
     cd $core > /dev/null 2>&1
     git_check_core
 
-    local morpheus_plugin_installed="$(cat $config/plugins.js | grep morpheus)"
+    local hydra_plugin_installed="$(cat $config/plugins.js | grep hydra-plugin)"
 
     if [ ! -f "$config/app.js" ]; then
         cp $core/packages/core/bin/config/$network/app.js $config/app.js
     fi
 
-    local morpheus_appjs_installed="$(cat $config/app.js | grep morpheus)"
+    local hydra_appjs_installed="$(cat $config/app.js | grep hydra-plugin)"
 
-    if [ "$up2date" = "yes" ] && [ ! -z "$morpheus_plugin_installed" ] && [ ! -z "$morpheus_appjs_installed" ]; then
+    if [ "$up2date" = "yes" ] && [ ! -z "$hydra_plugin_installed" ] && [ ! -z "$hydra_appjs_installed" ]; then
       echo -e "Already up-to-date."
       exit 1
     fi
@@ -98,11 +98,9 @@ main () {
     git checkout .
     git fetch --tags 2>&1
     git checkout $network 2>&1
-    git submodule update --init --recursive --remote 2>&1
 
     if [ "$?" != "0" ]; then
       rm yarn.lock > /dev/null 2>&1
-      git submodule update --init --recursive --remote 2>&1
     fi
 
     if [ "$?" != "0" ]; then

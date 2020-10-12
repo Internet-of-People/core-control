@@ -1,8 +1,5 @@
 #!/bin/bash
 
-#Branch name, used for core-control itself and hydra-core as well
-branch="master"
-
 #Network name
 network="mainnet"
 
