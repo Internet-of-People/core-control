@@ -35,10 +35,8 @@ pm2status () {
 git_check_core () {
 
   git fetch > /dev/null 2>&1
-  git tag -d $network
-  git fetch --tags > /dev/null 2>&1
   loc=$(git rev-parse --short @)
-  rem=$(git rev-parse --short $network)
+  rem=$(git rev-parse --short origin/$branch)
 
   if [ "$loc" = "$rem" ]; then
     up2date="yes"
@@ -52,7 +50,7 @@ git_check () {
 
   git fetch > /dev/null 2>&1
   loc=$(git rev-parse --short @)
-  rem=$(git rev-parse --short @{u})
+  rem=$(git rev-parse --short origin/$branch)
 
   if [ "$loc" = "$rem" ]; then
     up2date="yes"
@@ -303,7 +301,7 @@ install_db () {
 
 install_core () {
 
-  git clone $repo $core -b $network > /dev/null 2>&1
+  git clone $repo $core -b $branch > /dev/null 2>&1
 
   if [ -d $HOME/.config ]; then
     sudo chown -R $USER:$USER $HOME/.config > /dev/null 2>&1

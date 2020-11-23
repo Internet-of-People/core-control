@@ -3,5 +3,7 @@
 #Network name
 network="mainnet"
 
+branch="master"
+
 #P2P port
 p2p_port="4701"

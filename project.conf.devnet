@@ -3,5 +3,7 @@
 #Network name
 network="devnet"
 
+branch="develop"
+
 #P2P port
 p2p_port="4702"

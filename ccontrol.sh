@@ -82,13 +82,13 @@ main () {
     cd $core > /dev/null 2>&1
     git_check_core
 
-    local hydra_plugin_installed="$(cat $config/plugins.js | grep hydra-plugin)"
+    local hydra_plugin_installed="$(cat $config/plugins.js | grep '@internet-of-people/hydra-plugin')"
 
     if [ ! -f "$config/app.js" ]; then
         cp $core/packages/core/bin/config/$network/app.js $config/app.js
     fi
 
-    local hydra_appjs_installed="$(cat $config/app.js | grep hydra-plugin)"
+    local hydra_appjs_installed="$(cat $config/app.js | grep '@internet-of-people/hydra-plugin')"
 
     if [ "$up2date" = "yes" ] && [ ! -z "$hydra_plugin_installed" ] && [ ! -z "$hydra_appjs_installed" ]; then
       echo -e "Already up-to-date."
@@ -96,8 +96,7 @@ main () {
     fi
 
     git checkout .
-    git fetch --tags 2>&1
-    git checkout $network 2>&1
+    git checkout $branch 2>&1
 
     if [ "$?" != "0" ]; then
       rm yarn.lock > /dev/null 2>&1

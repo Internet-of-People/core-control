@@ -108,8 +108,8 @@ The end result is that your node will start syncing from 0.
 
 ### 2.6.31+p3
 
-- Upgraded to 4.0.1 SSI (project Morpheus, previously called DAC)
-- Added 1.0.0 DNS (project Coeus)
+- Upgraded to 4.0.4 SSI (project Morpheus, previously called DAC)
+- Added DNS (project Coeus)
 
 ### 2.6.31+p2
 
