@@ -368,7 +368,7 @@ update () {
 
   done
 
-  yarn setup
+  yarn setup > /dev/null 2>&1
 
   if [[ "$rstatus" = "online" && "$fstatus" = "online" && ! -z "$api" && ! -z "$added" ]]; then
 
