@@ -97,6 +97,7 @@ main () {
 
     git checkout .
     git checkout $branch 2>&1
+    git pull
 
     if [ "$?" != "0" ]; then
       rm yarn.lock > /dev/null 2>&1
