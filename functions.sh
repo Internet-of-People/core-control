@@ -266,14 +266,17 @@ status () {
 install_deps () {
 
   sudo timedatectl set-ntp no > /dev/null 2>&1
-  sudo apt install -y htop curl build-essential python git nodejs npm libpq-dev ntp gawk jq mc libjemalloc-dev make g++ > /dev/null 2>&1
-  sudo npm install -g npm@latest > /dev/null 2>&1
-  sudo npm install -g n grunt-cli pm2 yarn lerna > /dev/null 2>&1
-  sudo n 10 > /dev/null 2>&1
+  sudo apt install -y htop curl build-essential python git libpq-dev ntp gawk jq mc libjemalloc-dev make g++ > /dev/null 2>&1
+
+  sudo curl -sL https://deb.nodesource.com/setup_12.x | sudo -E bash - > /dev/null 2>&1
+  sudo curl -sL https://dl.yarnpkg.com/debian/pubkey.gpg | sudo apt-key add - > /dev/null 2>&1
+  echo "deb https://dl.yarnpkg.com/debian/ stable main" | sudo tee /etc/apt/sources.list.d/yarn.list > /dev/null 2>&1
+  sudo apt-get update && sudo apt-get install -y nodejs yarn > /dev/null 2>&1
+
+  sudo npm install -g grunt-cli pm2 lerna > /dev/null 2>&1
   pm2 install pm2-logrotate > /dev/null 2>&1
 
-  local pm2startup="$(pm2 startup | tail -n1)"
-  eval $pm2startup > /dev/null 2>&1
+  pm2 startup > /dev/null 2>&1
   pm2 save --force > /dev/null 2>&1
 
 }
