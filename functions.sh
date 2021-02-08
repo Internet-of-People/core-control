@@ -271,7 +271,8 @@ install_deps () {
   sudo curl -sL https://deb.nodesource.com/setup_12.x | sudo -E bash - > /dev/null 2>&1
   sudo curl -sL https://dl.yarnpkg.com/debian/pubkey.gpg | sudo apt-key add - > /dev/null 2>&1
   echo "deb https://dl.yarnpkg.com/debian/ stable main" | sudo tee /etc/apt/sources.list.d/yarn.list > /dev/null 2>&1
-  sudo apt-get update && sudo apt-get install -y nodejs yarn > /dev/null 2>&1
+  sudo apt-get update > /dev/null 2>&1
+  sudo apt-get install -y nodejs yarn > /dev/null 2>&1
 
   sudo npm install -g grunt-cli pm2 lerna > /dev/null 2>&1
   pm2 install pm2-logrotate > /dev/null 2>&1
