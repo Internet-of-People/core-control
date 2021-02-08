@@ -2,6 +2,8 @@
 
 ## Installation
 
+> IMPORTANT: We only support Ubuntu 18.04LTS and Ubuntu 20.04 LTS
+
 ```sh
 git clone https://github.com/Internet-of-People/core-control -b master
 ```
