@@ -95,9 +95,8 @@ main () {
       exit 1
     fi
 
-    git checkout .
     git checkout $branch 2>&1
-    git pull
+    git reset --hard origin/$branch 2>&1
 
     if [ "$?" != "0" ]; then
       rm yarn.lock > /dev/null 2>&1
